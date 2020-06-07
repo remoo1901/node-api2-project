@@ -44,4 +44,30 @@ router.get("/api/posts/:id", (req, res) => {
     });
 });
 
+// POST request
+
+router.post("/api/posts", (req, res) => {
+  const { title, contents } = req.body;
+
+  if (!title || !contents) {
+    res.status(400).json({
+      errorMessage: "Please provide title and contents for the post.",
+    });
+  }
+
+  posts
+    .insert({ title, contents })
+    .then((post) => {
+      res.status(201).json({
+        message: " new post created",
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(500).json({
+        message: `Error retrieving the posts with this ID `,
+      });
+    });
+});
+
 module.exports = router;
