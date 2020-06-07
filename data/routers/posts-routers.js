@@ -1,13 +1,13 @@
 const express = require("express");
-const posts = require("../db");
-const comments = require("../db");
+const db = require("../db");
+//const comments = require("../db");
 
 const router = express.Router();
 
 // GET request
 
 router.get("/api/posts", (req, res) => {
-  posts
+  db
     .find({
       sortBy: req.query.sort,
       limit: req.query.limit,
@@ -25,14 +25,14 @@ router.get("/api/posts", (req, res) => {
 });
 
 router.get("/api/posts/:id", (req, res) => {
-  posts
+  db
     .findById(req.params.id)
     .then((post) => {
-      if (post.id) {
+      if (post) {
         res.status(200).json(post);
-      } else if (!post.id) {
+      } else {
         res.status(404).json({
-          message: `post with this ID  not found`,
+          message: "post with this ID  not found",
         });
       }
     })
@@ -43,6 +43,7 @@ router.get("/api/posts/:id", (req, res) => {
       });
     });
 });
+
 
 // POST request
 
@@ -55,7 +56,7 @@ router.post("/api/posts", (req, res) => {
     });
   }
 
-  posts
+  db
     .insert({ title, contents })
     .then((post) => {
       res.status(201).json({
@@ -69,5 +70,7 @@ router.post("/api/posts", (req, res) => {
       });
     });
 });
+
+
 
 module.exports = router;
