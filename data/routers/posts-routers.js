@@ -7,11 +7,10 @@ const router = express.Router();
 // GET request
 
 router.get("/api/posts", (req, res) => {
-  db
-    .find({
-      sortBy: req.query.sort,
-      limit: req.query.limit,
-    })
+  db.find({
+    sortBy: req.query.sort,
+    limit: req.query.limit,
+  })
     .then((posts) => {
       res.status(200).json(posts);
     })
@@ -25,8 +24,7 @@ router.get("/api/posts", (req, res) => {
 });
 
 router.get("/api/posts/:id", (req, res) => {
-  db
-    .findById(req.params.id)
+  db.findById(req.params.id)
     .then((post) => {
       if (post) {
         res.status(200).json(post);
@@ -44,7 +42,6 @@ router.get("/api/posts/:id", (req, res) => {
     });
 });
 
-
 // POST request
 
 router.post("/api/posts", (req, res) => {
@@ -56,8 +53,7 @@ router.post("/api/posts", (req, res) => {
     });
   }
 
-  db
-    .insert({ title, contents })
+  db.insert({ title, contents })
     .then((post) => {
       res.status(201).json({
         message: " new post created",
@@ -71,6 +67,25 @@ router.post("/api/posts", (req, res) => {
     });
 });
 
+// DELETE request
 
+router.delete("/api/posts/:id", (req, res) => {
+  db.remove(req.params.id)
+    .then((post) => {
+      if (post > 0) {
+        res.status(200).json({
+          message: "post has been deleted",
+        });
+      } else {
+        res.status(404).json({
+          message: "The post with the specified ID does not exist.",
+        });
+      }
+    })
+    .catch((err) => {
+      console.log(err);
+      error: "The post could not be removed";
+    });
+});
 
 module.exports = router;
