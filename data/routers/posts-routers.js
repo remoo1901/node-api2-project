@@ -84,7 +84,36 @@ router.delete("/api/posts/:id", (req, res) => {
     })
     .catch((err) => {
       console.log(err);
-      error: "The post could not be removed";
+      res.status(500).json({
+        error: "The post could not be removed",
+      });
+    });
+});
+
+// PUT request
+
+router.put("/api/posts/:id", (req, res) => {
+  db.findById(req.params.id)
+    .then((post) => {
+      if (!post) {
+        res
+          .status(404)
+          .json({ message: "The post with the specified ID does not exist." });
+      } else if (!req.body.title || !req.body.contents) {
+        res.status(400).json({ message: "Provide title and contents." });
+      } else {
+        db.update(req.params.id, req.body).then((value) => {
+          db.findById(req.params.id).then((updatePost) => {
+            res.status(200).json(updatePost);
+          });
+        });
+      }
+    })
+    .catch((err) => {
+      console.log(err);
+      res
+        .status(500)
+        .json({ message: "The post information could not be modified." });
     });
 });
 
